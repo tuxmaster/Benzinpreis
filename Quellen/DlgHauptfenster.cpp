@@ -25,10 +25,10 @@ DlgHauptfenster::DlgHauptfenster(QWidget *eltern) :
 	QTimer::singleShot(0,this,SLOT(starten()));
 }
 
-void DlgHauptfenster::changeEvent(QEvent *e)
+void DlgHauptfenster::changeEvent(QEvent *ereignis)
 {
-	QMainWindow::changeEvent(e);
-	switch (e->type())
+	QMainWindow::changeEvent(ereignis);
+	switch (ereignis->type())
 	{
 		case QEvent::LanguageChange:
 			retranslateUi(this);
@@ -40,6 +40,9 @@ void DlgHauptfenster::changeEvent(QEvent *e)
 void DlgHauptfenster::starten()
 {
 	K_Steuerung=new Steuerung(this);
+	txtAPI_Key->setText(K_Steuerung->API_KeyHolen());
+	sbAktualisierung->setValue(static_cast<int>(K_Steuerung->AktualisierungHolen()));
+
 	connect(K_Steuerung,&Steuerung::KeinePLZ_DB,this,&DlgHauptfenster::KeinePLZDatenbank);
 	connect(K_Steuerung,&Steuerung::Fehler,this,&DlgHauptfenster::Fehler);
 	connect(K_Steuerung,&Steuerung::Meldung,this,&DlgHauptfenster::Statusmeldung);
@@ -75,4 +78,17 @@ void DlgHauptfenster::on_tbPLZ_clicked()
 void DlgHauptfenster::NeuePosition(const QStringList position)
 {
 	txtPosition->setText(position.join(','));
+}
+void DlgHauptfenster::closeEvent(QCloseEvent *ereignis)
+{
+	K_Steuerung->EinstellungenSpeichern();
+	ereignis->accept();
+}
+void DlgHauptfenster::on_txtAPI_Key_editingFinished()
+{
+	K_Steuerung->API_KeySetzen(txtAPI_Key->text());
+}
+void DlgHauptfenster::on_sbAktualisierung_valueChanged(int wert)
+{
+	K_Steuerung->AktualisierungSetzen(static_cast<uint>(wert));
 }

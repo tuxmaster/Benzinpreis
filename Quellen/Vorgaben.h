@@ -17,8 +17,12 @@
 #ifndef VORGABEN_H
 #define VORGABEN_H
 
-#define PLZ_DB_URL "http://www.fa-technik.adfc.de/code/opengeodb/DE.tab"
-#define PLZ_DB_NAME "PLZDB"
+#define PLZ_DB_URL				"http://www.fa-technik.adfc.de/code/opengeodb/DE.tab"
+#define PLZ_DB_NAME				"PLZDB"
+#define APP_NAME				"Benzinpreismonitor"
+#define APP_ORGANISATION		"Tuxmaster"
+#define PARAM_API_KEY			"API-Key"
+#define PARAM_AKTUALISIERUNG	"Aktualisierung"
 
 
 #endif // VORGABEN_H

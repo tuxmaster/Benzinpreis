@@ -29,6 +29,11 @@ class Steuerung : public QObject
 		explicit				Steuerung(QObject *eltern = Q_NULLPTR);
 		const QString&			Datenbankdatei()const {return K_Datenbankdatei;}
 		const QStringList		GPS(const uint &plz);
+		void					EinstellungenSpeichern();
+		void					API_KeySetzen(const QString &key){K_API_Key=key;}
+		void					AktualisierungSetzen(const uint&zeit) {K_Akualisierung=zeit;}
+		const QString&			API_KeyHolen()const{return K_API_Key;}
+		const uint&				AktualisierungHolen()const{return K_Akualisierung;}
 
 	Q_SIGNALS:
 		void					KeinePLZ_DB();
@@ -45,7 +50,11 @@ class Steuerung : public QObject
 	private:
 		PLZ_Datenbank*			K_PLZ_DB;
 		QString					K_Datenbankdatei;
+		QString					K_API_Key;
+		uint					K_Akualisierung;
 		QGeoPositionInfoSource*	K_PositionsQuelle;
+		QSettings*				K_Einstellungen;
+		void					EinstellungenLaden();
 };
 
 #endif // STEUERUNG_H

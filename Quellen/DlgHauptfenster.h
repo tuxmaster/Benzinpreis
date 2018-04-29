@@ -34,12 +34,15 @@ class DlgHauptfenster : public QMainWindow, private Ui::DlgHauptfenster
 		void		Fehler(const QString &fehler);
 		void		Statusmeldung(const QString &meldung);
 		void		on_tbPLZ_clicked();
+		void		on_txtAPI_Key_editingFinished();
+		void		on_sbAktualisierung_valueChanged(int wert);
 		void		NeuePosition(const QStringList position);
 
 	private:
 		Steuerung*	K_Steuerung;
 	protected:
-		void		changeEvent(QEvent *e) Q_DECL_OVERRIDE;
+		void		changeEvent(QEvent *ereignis) Q_DECL_OVERRIDE;
+		void		closeEvent(QCloseEvent *ereignis) Q_DECL_OVERRIDE;
 };
 
 #endif // DLGHAUPTFENSTER_H

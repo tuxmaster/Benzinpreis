@@ -19,10 +19,14 @@
 #include <QtCore>
 
 #include "DlgHauptfenster.h"
+#include "Vorgaben.h"
 
 int main(int argumente_anzahl, char *argumente[])
 {
 	QApplication qt(argumente_anzahl,argumente);
+	qt.setApplicationName(APP_NAME);
+	qt.setOrganizationName(APP_ORGANISATION);
+
 	QString Uebersetzungspfad=QLibraryInfo::location(QLibraryInfo::TranslationsPath);
 	QTranslator QtUebersetzung;
 	QtUebersetzung.load(QString("qt_%1").arg(QLocale::system().name()),Uebersetzungspfad);

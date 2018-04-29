@@ -16,6 +16,7 @@
 */
 #include "Steuerung.h"
 #include "PLZ_Datenbank.h"
+#include "Vorgaben.h"
 
 #include <QtPositioning>
 
@@ -24,6 +25,8 @@ Steuerung::Steuerung(QObject *eltern) : QObject(eltern)
 	K_Datenbankdatei="/tmp/PLZdb";
 	K_PositionsQuelle=QGeoPositionInfoSource::createDefaultSource(this);
 	K_PLZ_DB=new PLZ_Datenbank(K_Datenbankdatei,this);
+	K_Einstellungen=new QSettings(this);
+	EinstellungenLaden();
 
 	connect(K_PLZ_DB, &PLZ_Datenbank::KeineDatenbank,this,&Steuerung::KeinePLZ_DB);
 	connect(K_PLZ_DB, &PLZ_Datenbank::Fehler,this,&Steuerung::Fehler);
@@ -43,4 +46,14 @@ void Steuerung::NeuePosition(const QGeoPositionInfo &postion)
 	if(postion.isValid())
 		Q_EMIT Position(QStringList()<<QString::number(postion.coordinate().latitude())
 						<<QString::number(postion.coordinate().longitude()));
+}
+void Steuerung::EinstellungenSpeichern()
+{
+	K_Einstellungen->setValue(PARAM_API_KEY,K_API_Key);
+	K_Einstellungen->setValue(PARAM_AKTUALISIERUNG,K_Akualisierung);
+}
+void Steuerung::EinstellungenLaden()
+{
+	K_API_Key=K_Einstellungen->value(PARAM_API_KEY).toString();
+	K_Akualisierung=K_Einstellungen->value(PARAM_AKTUALISIERUNG).toUInt();
 }
