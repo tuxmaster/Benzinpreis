@@ -30,12 +30,15 @@ set( QUELLEN
     "Quellen/PLZ_Datenbank.cpp"
     "Quellen/PLZ_Datenbank.h"
     "Quellen/Vorgaben.h"
+    "Quellen/Tankstellen.cpp"
+    "Quellen/Tankstellen.h"
     )
 
 set( MOC
     "Quellen/DlgHauptfenster.h"
     "Quellen/Steuerung.h"
     "Quellen/PLZ_Datenbank.h"
+    "Quellen/Tankstellen.h"
     )
 
 set( UI

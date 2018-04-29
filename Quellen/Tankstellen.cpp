@@ -14,17 +14,17 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#ifndef VORGABEN_H
-#define VORGABEN_H
+#include "Tankstellen.h"
 
-#define PLZ_DB_URL				"http://www.fa-technik.adfc.de/code/opengeodb/DE.tab"
-#define PLZ_DB_NAME				"PLZDB"
-#define APP_NAME				"Benzinpreismonitor"
-#define APP_ORGANISATION		"Tuxmaster"
-#define PARAM_API_KEY			"API-Key"
-#define PARAM_AKTUALISIERUNG	"Aktualisierung"
-#define PARAM_PLZ_DB			"PLZ-Datenbank"
-#define PARAM_PLZ_DB_WERT		"/tmp/PLZdb"
-#define TANKSTELLE_URL			"https://creativecommons.tankerkoenig.de/json/"
+Tankstellen::Tankstellen(uint &aktualisierung_preis, QObject *eltern) : QObject(eltern)
+{
+	K_Aktualisierungsintervall_Preis=aktualisierung_preis;
 
-#endif // VORGABEN_H
+	K_Preiswecker=new QTimer(this);
+	K_Preiswecker->start(static_cast<int>(K_Aktualisierungsintervall_Preis)*60000);
+	connect(K_Preiswecker,&QTimer::timeout,this,&Tankstellen::PreisAktualisieren);
+}
+void Tankstellen::PreisAktualisieren()
+{
+
+}

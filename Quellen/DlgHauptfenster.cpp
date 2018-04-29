@@ -42,6 +42,7 @@ void DlgHauptfenster::starten()
 	K_Steuerung=new Steuerung(this);
 	txtAPI_Key->setText(K_Steuerung->API_KeyHolen());
 	sbAktualisierung->setValue(static_cast<int>(K_Steuerung->AktualisierungHolen()));
+	txtPLZ_DB->setText(K_Steuerung->PLZ_DBHolen());
 
 	connect(K_Steuerung,&Steuerung::KeinePLZ_DB,this,&DlgHauptfenster::KeinePLZDatenbank);
 	connect(K_Steuerung,&Steuerung::Fehler,this,&DlgHauptfenster::Fehler);
@@ -91,4 +92,8 @@ void DlgHauptfenster::on_txtAPI_Key_editingFinished()
 void DlgHauptfenster::on_sbAktualisierung_valueChanged(int wert)
 {
 	K_Steuerung->AktualisierungSetzen(static_cast<uint>(wert));
+}
+void DlgHauptfenster::on_txtPLZ_DB_editingFinished()
+{
+	K_Steuerung->PLZ_DBSetzen(txtPLZ_DB->text());
 }

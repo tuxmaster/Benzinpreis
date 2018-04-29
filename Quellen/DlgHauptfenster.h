@@ -35,6 +35,7 @@ class DlgHauptfenster : public QMainWindow, private Ui::DlgHauptfenster
 		void		Statusmeldung(const QString &meldung);
 		void		on_tbPLZ_clicked();
 		void		on_txtAPI_Key_editingFinished();
+		void		on_txtPLZ_DB_editingFinished();
 		void		on_sbAktualisierung_valueChanged(int wert);
 		void		NeuePosition(const QStringList position);
 

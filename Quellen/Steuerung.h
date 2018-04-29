@@ -22,6 +22,7 @@
 
 class QGeoPositionInfoSource;
 class PLZ_Datenbank;
+class Tankstellen;
 class Steuerung : public QObject
 {
 		Q_OBJECT
@@ -32,8 +33,10 @@ class Steuerung : public QObject
 		void					EinstellungenSpeichern();
 		void					API_KeySetzen(const QString &key){K_API_Key=key;}
 		void					AktualisierungSetzen(const uint&zeit) {K_Akualisierung=zeit;}
+		void					PLZ_DBSetzen(const QString &datei) {K_Datenbankdatei=datei;}
 		const QString&			API_KeyHolen()const{return K_API_Key;}
 		const uint&				AktualisierungHolen()const{return K_Akualisierung;}
+		const QString&			PLZ_DBHolen()const {return K_Datenbankdatei;}
 
 	Q_SIGNALS:
 		void					KeinePLZ_DB();
@@ -49,6 +52,7 @@ class Steuerung : public QObject
 
 	private:
 		PLZ_Datenbank*			K_PLZ_DB;
+		Tankstellen*			K_Tankstellen;
 		QString					K_Datenbankdatei;
 		QString					K_API_Key;
 		uint					K_Akualisierung;

@@ -16,17 +16,18 @@
 */
 #include "Steuerung.h"
 #include "PLZ_Datenbank.h"
+#include "Tankstellen.h"
 #include "Vorgaben.h"
 
 #include <QtPositioning>
 
 Steuerung::Steuerung(QObject *eltern) : QObject(eltern)
 {
-	K_Datenbankdatei="/tmp/PLZdb";
-	K_PositionsQuelle=QGeoPositionInfoSource::createDefaultSource(this);
-	K_PLZ_DB=new PLZ_Datenbank(K_Datenbankdatei,this);
 	K_Einstellungen=new QSettings(this);
 	EinstellungenLaden();
+
+	K_PositionsQuelle=QGeoPositionInfoSource::createDefaultSource(this);
+	K_PLZ_DB=new PLZ_Datenbank(K_Datenbankdatei,this);
 
 	connect(K_PLZ_DB, &PLZ_Datenbank::KeineDatenbank,this,&Steuerung::KeinePLZ_DB);
 	connect(K_PLZ_DB, &PLZ_Datenbank::Fehler,this,&Steuerung::Fehler);
@@ -51,9 +52,11 @@ void Steuerung::EinstellungenSpeichern()
 {
 	K_Einstellungen->setValue(PARAM_API_KEY,K_API_Key);
 	K_Einstellungen->setValue(PARAM_AKTUALISIERUNG,K_Akualisierung);
+	K_Einstellungen->setValue(PARAM_PLZ_DB,K_Datenbankdatei);
 }
 void Steuerung::EinstellungenLaden()
 {
 	K_API_Key=K_Einstellungen->value(PARAM_API_KEY).toString();
 	K_Akualisierung=K_Einstellungen->value(PARAM_AKTUALISIERUNG).toUInt();
+	K_Datenbankdatei=K_Einstellungen->value(PARAM_PLZ_DB,PARAM_PLZ_DB_WERT).toString();
 }

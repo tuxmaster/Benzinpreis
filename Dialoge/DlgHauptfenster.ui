@@ -120,41 +120,77 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QLineEdit" name="txtPLZ_DB">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>380</y>
-      <width>284</width>
-      <height>65</height>
+      <x>370</x>
+      <y>450</y>
+      <width>113</width>
+      <height>28</height>
      </rect>
     </property>
-    <layout class="QFormLayout" name="formLayout_2">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>API Schlüssel:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="txtAPI_Key"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Aktualisierungsinterval:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="sbAktualisierung">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>440</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PLZ Datenbank:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txtAPI_Key">
+    <property name="geometry">
+     <rect>
+      <x>368</x>
+      <y>381</y>
+      <width>125</width>
+      <height>28</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>211</x>
+      <y>381</y>
+      <width>90</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>API Schlüssel:</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="sbAktualisierung">
+    <property name="geometry">
+     <rect>
+      <x>368</x>
+      <y>415</y>
+      <width>49</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>211</x>
+      <y>415</y>
+      <width>151</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Aktualisierungsinterval:</string>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="txtStatus"/>
