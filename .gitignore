@@ -36,4 +36,6 @@ Makefile*
 
 # QtCtreator CMake
 CMakeLists.txt.user*
-
+# Meins
+bauen/
+cmake_install.cmake
