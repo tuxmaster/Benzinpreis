@@ -18,6 +18,7 @@
 #define VORGABEN_H
 
 #define PLZ_DB_URL "http://www.fa-technik.adfc.de/code/opengeodb/DE.tab"
+#define PLZ_DB_NAME "PLZDB"
 
 
 #endif // VORGABEN_H

@@ -16,12 +16,17 @@
 */
 
 #include <QApplication>
+#include <QtCore>
 
 #include "DlgHauptfenster.h"
 
 int main(int argumente_anzahl, char *argumente[])
 {
 	QApplication qt(argumente_anzahl,argumente);
+	QString Uebersetzungspfad=QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+	QTranslator QtUebersetzung;
+	QtUebersetzung.load(QString("qt_%1").arg(QLocale::system().name()),Uebersetzungspfad);
+	qt.installTranslator(&QtUebersetzung);
 	DlgHauptfenster hauptfenster;
 	hauptfenster.show();
 	return qt.exec();

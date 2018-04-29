@@ -18,27 +18,34 @@
 #define STEUERUNG_H
 
 #include <QtCore>
+#include <QGeoPositionInfo>
 
+class QGeoPositionInfoSource;
 class PLZ_Datenbank;
 class Steuerung : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit			Steuerung(QObject *eltern = Q_NULLPTR);
-		const QString&		Datenbankdatei()const {return K_Datenbankdatei;}
-		const QStringList	GPS(const uint &plz);
+		explicit				Steuerung(QObject *eltern = Q_NULLPTR);
+		const QString&			Datenbankdatei()const {return K_Datenbankdatei;}
+		const QStringList		GPS(const uint &plz);
 
 	Q_SIGNALS:
-		void				KeinePLZ_DB();
-		void				PLZ_DB_Bereit();
-		void				Fehler(const QString &fehler);
-		void				Meldung(const QString &meldung);
+		void					KeinePLZ_DB();
+		void					PLZ_DB_Bereit();
+		void					Fehler(const QString &fehler);
+		void					Meldung(const QString &meldung);
+		void					Position(const QStringList &position);
 
 	public Q_SLOTS:
 
+	private Q_SLOTS:
+		void					NeuePosition(const QGeoPositionInfo &postion);
+
 	private:
-		PLZ_Datenbank*		K_PLZ_DB;
-		QString				K_Datenbankdatei;
+		PLZ_Datenbank*			K_PLZ_DB;
+		QString					K_Datenbankdatei;
+		QGeoPositionInfoSource*	K_PositionsQuelle;
 };
 
 #endif // STEUERUNG_H

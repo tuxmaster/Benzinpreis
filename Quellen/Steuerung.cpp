@@ -17,16 +17,30 @@
 #include "Steuerung.h"
 #include "PLZ_Datenbank.h"
 
+#include <QtPositioning>
+
 Steuerung::Steuerung(QObject *eltern) : QObject(eltern)
 {
 	K_Datenbankdatei="/tmp/PLZdb";
+	K_PositionsQuelle=QGeoPositionInfoSource::createDefaultSource(this);
 	K_PLZ_DB=new PLZ_Datenbank(K_Datenbankdatei,this);
+
 	connect(K_PLZ_DB, &PLZ_Datenbank::KeineDatenbank,this,&Steuerung::KeinePLZ_DB);
 	connect(K_PLZ_DB, &PLZ_Datenbank::Fehler,this,&Steuerung::Fehler);
 	connect(K_PLZ_DB, &PLZ_Datenbank::Meldung,this,&Steuerung::Meldung);
 	connect(K_PLZ_DB, &PLZ_Datenbank::DatenbankVorhanden,this,&Steuerung::PLZ_DB_Bereit);
+
+	if (K_PositionsQuelle)
+		connect(K_PositionsQuelle,&QGeoPositionInfoSource::positionUpdated,this,&Steuerung::NeuePosition);
 }
 const QStringList Steuerung::GPS(const uint &plz)
 {
 	return K_PLZ_DB->GPS(plz);
+}
+
+void Steuerung::NeuePosition(const QGeoPositionInfo &postion)
+{
+	if(postion.isValid())
+		Q_EMIT Position(QStringList()<<QString::number(postion.coordinate().latitude())
+						<<QString::number(postion.coordinate().longitude()));
 }

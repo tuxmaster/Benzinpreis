@@ -170,7 +170,11 @@ const QStringList PLZ_Datenbank::GPS(const uint &plz)
 {
 	if(!K_Datenbank)
 		return QStringList();
-	QSqlDatabase DB = QSqlDatabase::addDatabase("QSQLITE");
+	QSqlDatabase DB;
+	if (!QSqlDatabase::connectionNames().contains(PLZ_DB_NAME))
+		DB = QSqlDatabase::addDatabase("QSQLITE",PLZ_DB_NAME);
+	else
+		DB = QSqlDatabase::database(PLZ_DB_NAME);
 	DB.setDatabaseName(K_Datei);
 	if (!DB.open())
 	{
@@ -191,7 +195,7 @@ const QStringList PLZ_Datenbank::GPS(const uint &plz)
 		DB.close();
 		return QStringList();
 	}
-	while (Abfrage.next())
-		qInfo()<<Abfrage.value(0).toString()<<"-"<<Abfrage.value(1).toString();
+	if(Abfrage.first())
+		return QStringList()<<Abfrage.value(0).toString()<<Abfrage.value(1).toString();
 	return QStringList();
 }

@@ -44,6 +44,7 @@ void DlgHauptfenster::starten()
 	connect(K_Steuerung,&Steuerung::Fehler,this,&DlgHauptfenster::Fehler);
 	connect(K_Steuerung,&Steuerung::Meldung,this,&DlgHauptfenster::Statusmeldung);
 	connect(K_Steuerung,&Steuerung::PLZ_DB_Bereit,this,&DlgHauptfenster::PLZ_DB_da);
+	connect(K_Steuerung,&Steuerung::Position,this,&DlgHauptfenster::NeuePosition);
 }
 void DlgHauptfenster::KeinePLZDatenbank()
 {
@@ -61,5 +62,17 @@ void DlgHauptfenster::Statusmeldung(const QString &meldung)
 }
 void DlgHauptfenster::PLZ_DB_da()
 {
-	K_Steuerung->GPS(12345);
+	gbTabkstelle->setEnabled(true);
+}
+void DlgHauptfenster::on_tbPLZ_clicked()
+{
+	bool OK;
+	uint PLZ= static_cast<uint>(QInputDialog::getInt(this,trUtf8("Positionsbestimmung via Postleitzahl"),
+								   trUtf8("Deine Postleitzahl"),0,10000,99999,1,&OK));
+	if (OK)
+		txtPosition->setText(K_Steuerung->GPS(PLZ).join(','));
+}
+void DlgHauptfenster::NeuePosition(const QStringList position)
+{
+	txtPosition->setText(position.join(','));
 }

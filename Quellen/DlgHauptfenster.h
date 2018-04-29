@@ -33,6 +33,8 @@ class DlgHauptfenster : public QMainWindow, private Ui::DlgHauptfenster
 		void		PLZ_DB_da();
 		void		Fehler(const QString &fehler);
 		void		Statusmeldung(const QString &meldung);
+		void		on_tbPLZ_clicked();
+		void		NeuePosition(const QStringList position);
 
 	private:
 		Steuerung*	K_Steuerung;
