@@ -24,45 +24,52 @@
 class QGeoPositionInfoSource;
 class PLZ_Datenbank;
 class Tankstellen;
+class Preissuche;
 class Steuerung : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit				Steuerung(QObject *eltern = Q_NULLPTR);
-		const QString&			Datenbankdatei()const {return K_Datenbankdatei;}
-		const QStringList		GPS(const uint &plz);
-		void					EinstellungenSpeichern();
-		void					API_KeySetzen(const QString &key){K_API_Key=key;}
-		void					AktualisierungSetzen(const uint&zeit) {K_Akualisierung=zeit;}
-		void					PLZ_DBSetzen(const QString &datei) {K_Datenbankdatei=datei;}
-		void					LetztePositionSetzen(const QGeoCoordinate &pos){K_LetztePosition=pos;}
-		const QString&			API_KeyHolen()const{return K_API_Key;}
-		const uint&				AktualisierungHolen()const{return K_Akualisierung;}
-		const QString&			PLZ_DBHolen()const {return K_Datenbankdatei;}
-		const QGeoCoordinate&	LetztePositionHolen()const{return K_LetztePosition;}
+		explicit							Steuerung(QObject *eltern = Q_NULLPTR);
+		~Steuerung();
+		const QString&						Datenbankdatei()const {return K_Datenbankdatei;}
+		const QStringList					GPS(const uint &plz);
+		void								EinstellungenSpeichern();
+		void								NeuePreissuche(Preissuche *suche);
+		void								PreissucheLoeschen(const QString &welche);
+		void								API_KeySetzen(const QString &key);
+		void								AktualisierungSetzen(const uint&zeit);
+		void								PLZ_DBSetzen(const QString &datei) {K_Datenbankdatei=datei;}
+		void								LetztePositionSetzen(const QGeoCoordinate &pos){K_LetztePosition=pos;}
+		const QString&						API_KeyHolen()const{return K_API_Key;}
+		const uint&							AktualisierungHolen()const{return K_Akualisierung;}
+		const QString&						PLZ_DBHolen()const {return K_Datenbankdatei;}
+		const QGeoCoordinate&				LetztePositionHolen()const{return K_LetztePosition;}
+		const QHash<QString,Preissuche*>&	PreissuchenHolen()const {return K_Suchen;}
 
 	Q_SIGNALS:
-		void					KeinePLZ_DB();
-		void					PLZ_DB_Bereit();
-		void					Fehler(const QString &fehler);
-		void					Meldung(const QString &meldung);
-		void					Position(const QStringList &position);
+		void								KeinePLZ_DB();
+		void								PLZ_DB_Bereit();
+		void								Fehler(const QString &fehler);
+		void								Meldung(const QString &meldung);
+		void								Position(const QStringList &position);
+		void								Warnung(const QString&meldung);
 
 	public Q_SLOTS:
 
 	private Q_SLOTS:
-		void					NeuePosition(const QGeoPositionInfo &postion);
+		void								NeuePosition(const QGeoPositionInfo &postion);
 
 	private:
-		PLZ_Datenbank*			K_PLZ_DB;
-		Tankstellen*			K_Tankstellen;
-		QString					K_Datenbankdatei;
-		QString					K_API_Key;
-		uint					K_Akualisierung;
-		QGeoPositionInfoSource*	K_PositionsQuelle;
-		QSettings*				K_Einstellungen;
-		QGeoCoordinate			K_LetztePosition;
-		void					EinstellungenLaden();
+		PLZ_Datenbank*						K_PLZ_DB;
+		Tankstellen*						K_Tankstellen;
+		QString								K_Datenbankdatei;
+		QString								K_API_Key;
+		uint								K_Akualisierung;
+		QGeoPositionInfoSource*				K_PositionsQuelle;
+		QSettings*							K_Einstellungen;
+		QGeoCoordinate						K_LetztePosition;
+		void								EinstellungenLaden();
+		QHash<QString,Preissuche*>			K_Suchen;
 };
 
 #endif // STEUERUNG_H

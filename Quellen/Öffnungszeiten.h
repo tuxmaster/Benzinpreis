@@ -14,36 +14,30 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
-#ifndef TANKSTELLEN_H
-#define TANKSTELLEN_H
+#ifndef OEFFNUNGSZEITEN_H
+#define OEFFNUNGSZEITEN_H
 
 #include <QtCore>
 
-class QNetworkAccessManager;
-class QNetworkReply;
-class Preissuche;
-class Tankstellen : public QObject
+class Oeffnungszeiten
 {
-		Q_OBJECT
 	public:
-		explicit				Tankstellen(QObject *eltern = Q_NULLPTR);
-		void					AufgabenUebernehmen(const QList<Preissuche*> &liste);
-		void					AktualisieungsintervallSetzen(const uint &zeit);
-		void					API_Key_Setzen(const QString &key){K_API_Key=key;}
+		Oeffnungszeiten(){}
+		Oeffnungszeiten(const QString &text,const QString &start,QString &ende)
+		{
+			K_Text=text;
+			K_Anfang=start;
+			K_Ende=ende;
+		}
+		const QString&	TextHolen()const{return K_Text;}
+		const QString&	AnfangHolen()const{return K_Anfang;}
+		const QString&	EndeHolen()const{return K_Ende;}
 
-	Q_SIGNALS:
-		void					Warnung(const QString& meldung);
-
-	private Q_SLOTS:
-		void					PreisAktualisieren();
-		void					AnfrageFertig(QNetworkReply *antwort);
 
 	private:
-		QTimer*					K_Preiswecker;
-		QList<Preissuche*>		K_Aufgaben;
-		QNetworkAccessManager*	K_NM;
-		QString					K_API_Key;
-		bool					K_Abrufpause;
-};
+		QString			K_Text;
+		QString			K_Anfang;
+		QString			K_Ende;
 
-#endif // TANKSTELLEN_H
+};
+#endif // ÖFFNUNGSZEITEN_H

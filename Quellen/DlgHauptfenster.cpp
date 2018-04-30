@@ -16,6 +16,7 @@
 */
 #include "DlgHauptfenster.h"
 #include "Steuerung.h"
+#include "Preissuche.h"
 #include <QtWidgets>
 #include <QtPositioning>
 
@@ -23,6 +24,9 @@ DlgHauptfenster::DlgHauptfenster(QWidget *eltern) :
 	QMainWindow(eltern)
 {
 	setupUi(this);
+	cbTreibstoff->addItem(trUtf8("Diesel"),"diesel");
+	cbTreibstoff->addItem(trUtf8("Super"),"e5");
+	cbTreibstoff->addItem(trUtf8("Super E10"),"e10");
 	QTimer::singleShot(0,this,SLOT(starten()));
 }
 
@@ -43,16 +47,22 @@ void DlgHauptfenster::starten()
 	K_Steuerung=new Steuerung(this);
 	txtAPI_Key->setText(K_Steuerung->API_KeyHolen());
 	sbAktualisierung->setValue(static_cast<int>(K_Steuerung->AktualisierungHolen()));
+	K_Steuerung->AktualisierungSetzen(K_Steuerung->AktualisierungHolen());
 	txtPLZ_DB->setText(K_Steuerung->PLZ_DBHolen());
 	QGeoCoordinate tmp=K_Steuerung->LetztePositionHolen();
 	if(tmp.isValid())
 		txtPosition->setText(QString("%1,%2").arg(tmp.latitude()).arg(tmp.longitude()));
 
+	for( QString Name : K_Steuerung->PreissuchenHolen().keys())
+	{
+		twPreise->addTab(NeuerPreistab(),Name);
+	}
 	connect(K_Steuerung,&Steuerung::KeinePLZ_DB,this,&DlgHauptfenster::KeinePLZDatenbank);
 	connect(K_Steuerung,&Steuerung::Fehler,this,&DlgHauptfenster::Fehler);
 	connect(K_Steuerung,&Steuerung::Meldung,this,&DlgHauptfenster::Statusmeldung);
 	connect(K_Steuerung,&Steuerung::PLZ_DB_Bereit,this,&DlgHauptfenster::PLZ_DB_da);
 	connect(K_Steuerung,&Steuerung::Position,this,&DlgHauptfenster::NeuePosition);
+	connect(K_Steuerung,&Steuerung::Warnung,this,&DlgHauptfenster::Statusmeldung);
 }
 void DlgHauptfenster::KeinePLZDatenbank()
 {
@@ -113,15 +123,47 @@ void DlgHauptfenster::on_tbPLZ_DB_clicked()
 void DlgHauptfenster::on_txtPosition_editingFinished()
 {
 	QStringList tmp=txtPosition->text().split(',');
-	if (tmp.size() == 2 )
+	if (GueltigePosition(tmp))
 	{
 		QGeoCoordinate geo(tmp[0].toDouble(),tmp[1].toDouble());
-		if(geo.isValid())
-			K_Steuerung->LetztePositionSetzen(geo);
+		K_Steuerung->LetztePositionSetzen(geo);
 	}
 }
 void DlgHauptfenster::on_txtPosition_textChanged(const QString &text)
 {
 	Q_UNUSED(text);
 	on_txtPosition_editingFinished();
+}
+void DlgHauptfenster::on_pbAnlegen_clicked()
+{
+	QStringList pos=txtPosition->text().split(',');
+	QString Sorte=cbTreibstoff->currentData().toString();
+	if((!GueltigePosition(pos)) or (txtName->text().isEmpty()))
+		return;
+	for(int tab=0;tab<twPreise->count();tab++)
+	{
+		if(twPreise->tabText(tab)==txtName->text())
+			return;
+	}
+	K_Steuerung->NeuePreissuche(new Preissuche(txtName->text(),QGeoCoordinate(pos[0].toDouble(),pos[1].toDouble()),
+											   cbUmkreis->currentText().toUInt(),Sorte));
+	twPreise->addTab(NeuerPreistab(),txtName->text());
+}
+bool DlgHauptfenster::GueltigePosition(const QStringList &pos)const
+{
+	if(pos.size() != 2)
+		return false;
+	QGeoCoordinate geo(pos[0].toDouble(),pos[1].toDouble());
+	return geo.isValid();
+}
+void DlgHauptfenster::on_twPreise_tabCloseRequested(int index)
+{
+	twPreise->widget(index)->deleteLater();
+	K_Steuerung->PreissucheLoeschen(twPreise->tabText(index));
+	twPreise->removeTab(index);
+}
+QWidget* DlgHauptfenster::NeuerPreistab()
+{
+	QWidget* tab=new QWidget(this);
+	return tab;
 }

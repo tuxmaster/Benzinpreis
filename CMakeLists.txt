@@ -32,6 +32,9 @@ set( QUELLEN
     "Quellen/Vorgaben.h"
     "Quellen/Tankstellen.cpp"
     "Quellen/Tankstellen.h"
+    "Quellen/Preissuche.h"
+    "Quellen/Tankstelle.h"
+    "Quellen/Öffnungszeiten.h"
     )
 
 set( MOC

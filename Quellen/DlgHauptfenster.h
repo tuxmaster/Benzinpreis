@@ -40,10 +40,15 @@ class DlgHauptfenster : public QMainWindow, private Ui::DlgHauptfenster
 		void		on_txtPosition_editingFinished();
 		void		on_txtPosition_textChanged(const QString &text);
 		void		on_sbAktualisierung_valueChanged(int wert);
+		void		on_pbAnlegen_clicked();
+		void		on_twPreise_tabCloseRequested(int index);
 		void		NeuePosition(const QStringList position);
 
 	private:
 		Steuerung*	K_Steuerung;
+		bool		GueltigePosition(const QStringList &pos)const;
+		QWidget*	NeuerPreistab();
+
 	protected:
 		void		changeEvent(QEvent *ereignis) Q_DECL_OVERRIDE;
 		void		closeEvent(QCloseEvent *ereignis) Q_DECL_OVERRIDE;

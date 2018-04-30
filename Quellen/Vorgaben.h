@@ -17,15 +17,20 @@
 #ifndef VORGABEN_H
 #define VORGABEN_H
 
-#define PLZ_DB_URL				"http://www.fa-technik.adfc.de/code/opengeodb/DE.tab"
-#define PLZ_DB_NAME				"PLZDB"
-#define APP_NAME				"Benzinpreismonitor"
-#define APP_ORGANISATION		"Tuxmaster"
-#define PARAM_API_KEY			"API-Key"
-#define PARAM_AKTUALISIERUNG	"Aktualisierung"
-#define PARAM_PLZ_DB			"PLZ-Datenbank"
-#define PARAM_PLZ_DB_WERT		"/tmp/PLZdb"
-#define PARAM_LETZTE_POSITION	"Letzte-Position"
-#define TANKSTELLE_URL			"https://creativecommons.tankerkoenig.de/json/"
+#define PLZ_DB_URL						"http://www.fa-technik.adfc.de/code/opengeodb/DE.tab"
+#define PLZ_DB_NAME						"PLZDB"
+#define APP_NAME						"Benzinpreismonitor"
+#define APP_ORGANISATION				"Tuxmaster"
+#define PARAM_API_KEY					"API-Key"
+#define PARAM_API_KEY_DEMO				"00000000-0000-0000-0000-000000000002"
+#define PARAM_AKTUALISIERUNG			"Aktualisierung"
+#define PARAM_AKTUALISSIERUG_VORAGBE	 1
+#define PARAM_PLZ_DB					"PLZ-Datenbank"
+#define PARAM_PLZ_DB_WERT				"/tmp/PLZdb"
+#define PARAM_LETZTE_POSITION			"Letzte-Position"
+#define PARAM_PREIS_POSITION			"Position"
+#define PARAM_PREIS_UMKREIS				"Umkreis"
+#define PARAM_PREIS_SORTE				"Sorte"
+#define TANKSTELLE_URL					"https://creativecommons.tankerkoenig.de/json/"
 
 #endif // VORGABEN_H
