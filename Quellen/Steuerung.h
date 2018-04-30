@@ -19,6 +19,7 @@
 
 #include <QtCore>
 #include <QGeoPositionInfo>
+#include <QGeoCoordinate>
 
 class QGeoPositionInfoSource;
 class PLZ_Datenbank;
@@ -34,9 +35,11 @@ class Steuerung : public QObject
 		void					API_KeySetzen(const QString &key){K_API_Key=key;}
 		void					AktualisierungSetzen(const uint&zeit) {K_Akualisierung=zeit;}
 		void					PLZ_DBSetzen(const QString &datei) {K_Datenbankdatei=datei;}
+		void					LetztePositionSetzen(const QGeoCoordinate &pos){K_LetztePosition=pos;}
 		const QString&			API_KeyHolen()const{return K_API_Key;}
 		const uint&				AktualisierungHolen()const{return K_Akualisierung;}
 		const QString&			PLZ_DBHolen()const {return K_Datenbankdatei;}
+		const QGeoCoordinate&	LetztePositionHolen()const{return K_LetztePosition;}
 
 	Q_SIGNALS:
 		void					KeinePLZ_DB();
@@ -58,6 +61,7 @@ class Steuerung : public QObject
 		uint					K_Akualisierung;
 		QGeoPositionInfoSource*	K_PositionsQuelle;
 		QSettings*				K_Einstellungen;
+		QGeoCoordinate			K_LetztePosition;
 		void					EinstellungenLaden();
 };
 

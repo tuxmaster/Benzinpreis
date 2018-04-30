@@ -25,6 +25,7 @@
 #define PARAM_AKTUALISIERUNG	"Aktualisierung"
 #define PARAM_PLZ_DB			"PLZ-Datenbank"
 #define PARAM_PLZ_DB_WERT		"/tmp/PLZdb"
+#define PARAM_LETZTE_POSITION	"Letzte-Position"
 #define TANKSTELLE_URL			"https://creativecommons.tankerkoenig.de/json/"
 
 #endif // VORGABEN_H

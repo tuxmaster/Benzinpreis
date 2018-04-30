@@ -17,6 +17,7 @@
 #include "DlgHauptfenster.h"
 #include "Steuerung.h"
 #include <QtWidgets>
+#include <QtPositioning>
 
 DlgHauptfenster::DlgHauptfenster(QWidget *eltern) :
 	QMainWindow(eltern)
@@ -43,6 +44,9 @@ void DlgHauptfenster::starten()
 	txtAPI_Key->setText(K_Steuerung->API_KeyHolen());
 	sbAktualisierung->setValue(static_cast<int>(K_Steuerung->AktualisierungHolen()));
 	txtPLZ_DB->setText(K_Steuerung->PLZ_DBHolen());
+	QGeoCoordinate tmp=K_Steuerung->LetztePositionHolen();
+	if(tmp.isValid())
+		txtPosition->setText(QString("%1,%2").arg(tmp.latitude()).arg(tmp.longitude()));
 
 	connect(K_Steuerung,&Steuerung::KeinePLZ_DB,this,&DlgHauptfenster::KeinePLZDatenbank);
 	connect(K_Steuerung,&Steuerung::Fehler,this,&DlgHauptfenster::Fehler);
@@ -105,4 +109,19 @@ void DlgHauptfenster::on_tbPLZ_DB_clicked()
 		txtPLZ_DB->setText(Datei);
 		on_txtPLZ_DB_editingFinished();
 	}
+}
+void DlgHauptfenster::on_txtPosition_editingFinished()
+{
+	QStringList tmp=txtPosition->text().split(',');
+	if (tmp.size() == 2 )
+	{
+		QGeoCoordinate geo(tmp[0].toDouble(),tmp[1].toDouble());
+		if(geo.isValid())
+			K_Steuerung->LetztePositionSetzen(geo);
+	}
+}
+void DlgHauptfenster::on_txtPosition_textChanged(const QString &text)
+{
+	Q_UNUSED(text);
+	on_txtPosition_editingFinished();
 }

@@ -53,10 +53,18 @@ void Steuerung::EinstellungenSpeichern()
 	K_Einstellungen->setValue(PARAM_API_KEY,K_API_Key);
 	K_Einstellungen->setValue(PARAM_AKTUALISIERUNG,K_Akualisierung);
 	K_Einstellungen->setValue(PARAM_PLZ_DB,K_Datenbankdatei);
+	if(K_LetztePosition.isValid())
+		K_Einstellungen->setValue(PARAM_LETZTE_POSITION,QStringList()<<QString::number(K_LetztePosition.latitude())
+																	  <<QString::number(K_LetztePosition.longitude()));
 }
 void Steuerung::EinstellungenLaden()
 {
 	K_API_Key=K_Einstellungen->value(PARAM_API_KEY).toString();
 	K_Akualisierung=K_Einstellungen->value(PARAM_AKTUALISIERUNG).toUInt();
 	K_Datenbankdatei=K_Einstellungen->value(PARAM_PLZ_DB,PARAM_PLZ_DB_WERT).toString();
+	if(K_Einstellungen->value(PARAM_LETZTE_POSITION).toStringList().size() == 2)
+		K_LetztePosition=QGeoCoordinate(K_Einstellungen->value(PARAM_LETZTE_POSITION).toStringList()[0].toDouble(),
+										K_Einstellungen->value(PARAM_LETZTE_POSITION).toStringList()[1].toDouble());
+	else
+		K_LetztePosition=QGeoCoordinate();
 }
