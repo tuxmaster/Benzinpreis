@@ -97,3 +97,12 @@ void DlgHauptfenster::on_txtPLZ_DB_editingFinished()
 {
 	K_Steuerung->PLZ_DBSetzen(txtPLZ_DB->text());
 }
+void DlgHauptfenster::on_tbPLZ_DB_clicked()
+{
+	QString Datei=QFileDialog::getSaveFileName(this,trUtf8("PLZ Datenbank"),txtPLZ_DB->text());
+	if(!Datei.isEmpty())
+	{
+		txtPLZ_DB->setText(Datei);
+		on_txtPLZ_DB_editingFinished();
+	}
+}
