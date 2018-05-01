@@ -19,31 +19,48 @@
 
 #include <QtCore>
 
+#include "Vorgaben.h"
+
 class QNetworkAccessManager;
 class QNetworkReply;
 class Preissuche;
+class Tankstelle;
+
 class Tankstellen : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit				Tankstellen(QObject *eltern = Q_NULLPTR);
-		void					AufgabenUebernehmen(const QList<Preissuche*> &liste);
-		void					AktualisieungsintervallSetzen(const uint &zeit);
-		void					API_Key_Setzen(const QString &key){K_API_Key=key;}
+		explicit					Tankstellen(QObject *eltern = Q_NULLPTR);
+		~Tankstellen();
+		void						AufgabenUebernehmen(const QList<Preissuche*> &liste);
+		void						AktualisieungsintervallSetzen(const uint &zeit);
+		void						API_Key_Setzen(const QString &key)
+		{
+			//Für Testzwecke;
+			if (qApp->arguments().contains("demo"))
+				K_API_Key=PARAM_API_KEY_DEMO;
+			else
+				K_API_Key=key;
+		}
 
 	Q_SIGNALS:
-		void					Warnung(const QString& meldung);
+		void						Warnung(const QString& meldung);
 
 	private Q_SLOTS:
-		void					PreisAktualisieren();
-		void					AnfrageFertig(QNetworkReply *antwort);
-
+		void						DetailsAktualisieren();
+		void						AnfrageFertig(QNetworkReply *antwort);
+		void						PreisAktualisierenWecker();
 	private:
-		QTimer*					K_Preiswecker;
-		QList<Preissuche*>		K_Aufgaben;
-		QNetworkAccessManager*	K_NM;
-		QString					K_API_Key;
-		bool					K_Abrufpause;
+		QTimer*						K_Preiswecker;
+		QTimer*						K_Detailwecker;
+		QList<Preissuche*>			K_Aufgaben;
+		QHash<QUuid,Tankstelle*>*	K_Tankstellen;
+		QNetworkAccessManager*		K_NM;
+		QString						K_API_Key;
+		bool						K_AbrufpauseListe;
+		bool						K_AbrufpauseDetail;
+		void						DetailsHolen(const QUuid &tanke=QUuid());
+		void						PreisAktualisieren(const bool wecker=false);
 };
 
 #endif // TANKSTELLEN_H

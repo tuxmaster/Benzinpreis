@@ -78,7 +78,7 @@ void Steuerung::EinstellungenLaden()
 {
 	K_API_Key=K_Einstellungen->value(PARAM_API_KEY,PARAM_API_KEY_DEMO).toString();
 	K_Tankstellen->API_Key_Setzen(K_API_Key);
-	K_Akualisierung=K_Einstellungen->value(PARAM_AKTUALISIERUNG,PARAM_AKTUALISSIERUG_VORAGBE).toUInt();
+	K_Akualisierung=K_Einstellungen->value(PARAM_AKTUALISIERUNG,PARAM_AKTUALISSIERUNG_VORGABE).toUInt();
 	K_Datenbankdatei=K_Einstellungen->value(PARAM_PLZ_DB,PARAM_PLZ_DB_WERT).toString();
 	if(K_Einstellungen->value(PARAM_LETZTE_POSITION).toStringList().size() == 2)
 		K_LetztePosition=QGeoCoordinate(K_Einstellungen->value(PARAM_LETZTE_POSITION).toStringList()[0].toDouble(),

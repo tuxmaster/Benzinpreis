@@ -40,4 +40,11 @@ class Oeffnungszeiten
 		QString			K_Ende;
 
 };
+//Damit man in das Objekt reinschauen kann.
+QDebug operator <<(QDebug debug, const Oeffnungszeiten &o)
+{
+	QDebugStateSaver Sicherung(debug);
+	debug<<"Öffnungszeiten("<<"Bezeichnung:"<<o.TextHolen()<<"Anfang:"<<o.AnfangHolen()<<"Ende:"<<o.EndeHolen()<<')';
+	return debug;
+}
 #endif // ÖFFNUNGSZEITEN_H
