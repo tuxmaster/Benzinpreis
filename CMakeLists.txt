@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.14)
 project(Benzinpreis)
 
 set(QT_MIN_VERSION "5.9.0")
@@ -18,6 +18,7 @@ find_package( Qt5Widgets ${QT_MIN_VERSION} REQUIRED)
 find_package( Qt5Network ${QT_MIN_VERSION} REQUIRED)
 find_package( Qt5Sql ${QT_MIN_VERSION} REQUIRED)
 find_package( Qt5Positioning ${QT_MIN_VERSION} REQUIRED)
+find_package( SQLite3 REQUIRED )
 
 include_directories( ${CMAKE_BINARY_DIR} )
 
@@ -54,7 +55,7 @@ qt5_wrap_cpp( MOC_SRC ${MOC} )
 
 add_executable( ${PROJECT_NAME} ${UI_HEADER} ${QUELLEN} ${MOC_SRC})
 
-target_link_libraries( ${PROJECT_NAME} Qt5::Widgets Qt5::Network Qt5::Sql Qt5::Positioning )
+target_link_libraries( ${PROJECT_NAME} Qt5::Widgets Qt5::Network Qt5::Sql Qt5::Positioning ${SQLite3_LIBRARIES})
 
 
 

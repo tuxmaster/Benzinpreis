@@ -19,11 +19,14 @@
 
 #include <QtNetwork>
 #include <QtSql>
+#include <sqlite3.h>
 
-PLZ_Datenbank::PLZ_Datenbank(const QString &datenbank, QObject *eltern) : QObject(eltern)
+Q_LOGGING_CATEGORY(logPLZ, APP_NAME  ".PLZ-DB")
+PLZ_Datenbank::PLZ_Datenbank(QObject *eltern) : QObject(eltern)
 {
-	K_Datei=datenbank;
+	K_Datei=QString("%1/PLZ.db").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
 	K_Datenbank=false;
+	qCDebug(logPLZ) << QString("PLZ database %1").arg(K_Datei).toUtf8().constData();
 	QTimer::singleShot(0,this,SLOT(los()));
 }
 void PLZ_Datenbank::los()
@@ -61,7 +64,10 @@ void PLZ_Datenbank::DownloadFertig(QNetworkReply*antwort)
 	else
 	{
 		if (antwort->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() != 300 )
+		{
+			qCDebug(logPLZ)<<"download done";
 			DownloadSpeichern(antwort);
+		}
 		else
 			Q_EMIT Fehler(tr("HTTP Status Code 300 empfangen."));
 	}
@@ -78,6 +84,7 @@ void PLZ_Datenbank::DownloadSpeichern(QNetworkReply* antwort)
 					  .arg(tmpDatei.errorString()));
 		return;
 	}
+	qCDebug(logPLZ)<<QString("downloaded file %1").arg(tmpDatei.fileName()).toUtf8().constData();
 	tmpDatei.write(antwort->readAll());
 	tmpDatei.close();
 	DownloadKonvertieren(tmpDatei);
@@ -96,15 +103,26 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 			return;
 		}
 	}
-	QSqlDatabase DB = QSqlDatabase::addDatabase("QSQLITE");
-	DB.setDatabaseName(K_Datei);
-	if (!DB.open())
+	QSqlDatabase DB_target = QSqlDatabase::addDatabase("QSQLITE", "file");
+	QSqlDatabase DB_temp = QSqlDatabase::addDatabase("QSQLITE", "temp");
+	DB_temp.setDatabaseName(":memory:");
+	qCDebug(logPLZ)<<"tmp db status:"<<DB_temp.isValid();
+	qCDebug(logPLZ)<<QString("databases: %1").arg(QSqlDatabase::connectionNames().join(", ")).toUtf8().constData();
+	DB_target.setDatabaseName(K_Datei);
+	QDir DB_path = QDir(QFileInfo(K_Datei).absolutePath());
+	if (!DB_path.mkpath(DB_path.absolutePath()))
 	{
-		Q_EMIT Fehler(tr("Konnte die PLZ Datenbank nicht erstellen.\n%1")
-					  .arg(DB.lastError().text()));
+		Q_EMIT Fehler(tr("Konnte den Pfad für die PLZ Datenbank nicht erstellen."));
 		return;
 	}
-	QSqlQuery Abfrage(DB);
+	if (!DB_temp.open())
+	{
+		Q_EMIT Fehler(tr("Konnte die temporäre PLZ Datenbank nicht erstellen.\n%1")
+					  .arg(DB_temp.lastError().text()));
+		return;
+	}
+	qCDebug(logPLZ)<<"tmp db file"<<DB_temp.databaseName().toUtf8().constData();
+	QSqlQuery Abfrage(DB_temp);
 	QStringList Abfragen;
 	Abfragen<<"create table plz_gps(PLZ int primary key , Lat real not null, Lo real not null);";
 	Abfragen<<"create UNIQUE INDEX idx_plz on plz_gps(PLZ)";
@@ -115,7 +133,7 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 			Q_EMIT Fehler(tr("SQL Fehler: %1 bei %2.")
 						  .arg(Abfrage.lastError().text())
 						  .arg(Aufgabe));
-			DB.close();
+			DB_temp.close();
 			return;
 		}
 	}
@@ -140,7 +158,7 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 				{
 					Q_EMIT Fehler(tr("Konnte die SQL Abfrage nicht vorbereiten.\n%1")
 								  .arg(Abfrage.lastError().text()));
-					DB.close();
+					DB_temp.close();
 					datei.close();
 					return;
 				}
@@ -154,7 +172,7 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 					{
 						Q_EMIT Fehler(tr("Konnte die Zeile nicht einfügen.\n%1")
 									  .arg(Abfrage.lastError().text()));
-						DB.close();
+						DB_temp.close();
 						datei.close();
 						return;
 					}
@@ -162,6 +180,61 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 			}
 	}
 	datei.close();
+	// try to sve the memory database
+	if (!DB_target.open())
+	{
+		Q_EMIT Fehler(tr("Konnte die permanente PLZ Datenbank nicht erstellen.\n%1")
+					  .arg(DB_target.lastError().text()));
+		return;
+	}
+	QVariant memDB = DB_temp.driver()->handle();
+	QVariant fileDB = DB_target.driver()->handle();
+	if (memDB.isValid() && qstrcmp(memDB.typeName(), "sqlite3*") == 0 )
+	{
+		qCDebug(logPLZ)<<"Have valid QVariant for in memory db.";
+		sqlite3 *handle_mem = *static_cast<sqlite3 **>(memDB.data());
+		if (handle_mem)
+		{
+			qCDebug(logPLZ)<<"Have valid handler for in memory db.";
+			if (fileDB.isValid() && qstrcmp(fileDB.typeName(), "sqlite3*") == 0 )
+			{
+				qCDebug(logPLZ)<<"Have valid QVariant for in file db.";
+				sqlite3 *handle_file = *static_cast<sqlite3 **>(fileDB.data());
+				if (handle_file)
+				{
+					qCDebug(logPLZ)<<"Have valid handler for in file db.";
+					qCDebug(logPLZ)<<"Try to copy the databas";
+					sqlite3_backup *pBackup;
+					pBackup=sqlite3_backup_init(handle_file, "main", handle_mem, "main");
+					bool backup_error=false;
+					if(pBackup)
+					{
+						qCDebug(logPLZ)<<"Backup init OK";
+						if (sqlite3_backup_step(pBackup, -1) != SQLITE_DONE)
+							backup_error=true;
+						sqlite3_backup_finish(pBackup);
+						if(backup_error)
+						{
+							Q_EMIT Fehler(tr("Fehler beim kopieren der Datenbank.\n%1").arg(DB_target.lastError().text()));
+							return;
+						}
+						else
+							qCDebug(logPLZ)<<"Backup OK";
+					}
+					else
+					{
+						Q_EMIT Fehler(tr("Fehler beim kopieren der Datenbank.\n%1").arg(DB_target.lastError().text()));
+						return;
+					}
+				}
+				else
+				{
+					qCDebug(logPLZ)<<"invalid handler file db.";
+					return;
+				}
+			}
+		}
+	}
 	K_Datenbank=true;
 	Q_EMIT DatenbankVorhanden();
 	Q_EMIT Meldung(tr("PLZ Datenbank erstellt."));

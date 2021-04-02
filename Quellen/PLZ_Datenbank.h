@@ -18,14 +18,16 @@
 #define PLZ_DATENBANK_H
 
 #include <QtCore>
+#include "Vorgaben.h"
 
 class QNetworkAccessManager;
 class QNetworkReply;
+Q_DECLARE_LOGGING_CATEGORY(logPLZ)
 class PLZ_Datenbank : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit				PLZ_Datenbank( const QString &datenbank,QObject *eltern = nullptr);
+		explicit				PLZ_Datenbank(QObject *eltern = nullptr);
 		const QStringList		GPS(const uint &plz);
 
 	public Q_SLOTS:

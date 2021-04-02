@@ -47,7 +47,6 @@ void DlgHauptfenster::starten()
 	txtAPI_Key->setText(K_Steuerung->API_KeyHolen());
 	sbAktualisierung->setValue(static_cast<int>(K_Steuerung->AktualisierungHolen()));
 	K_Steuerung->AktualisierungSetzen(K_Steuerung->AktualisierungHolen());
-	txtPLZ_DB->setText(K_Steuerung->PLZ_DBHolen());
 	QGeoCoordinate tmp=K_Steuerung->LetztePositionHolen();
 	if(tmp.isValid())
 		txtPosition->setText(QString("%1,%2").arg(tmp.latitude()).arg(tmp.longitude()));
@@ -65,8 +64,7 @@ void DlgHauptfenster::starten()
 }
 void DlgHauptfenster::KeinePLZDatenbank()
 {
-	 QMessageBox::information(this,tr("Keine Datenbank"),tr("Die Postleizahlendatenbank %1 wurde nicht gefunden.\nDaher wird sie erstellt.")
-															.arg(K_Steuerung->Datenbankdatei()));
+	 QMessageBox::information(this,tr("Keine Postleitzahlendatenbank"),tr("Die Datenbank wurde nicht gefunden.\nDaher wird sie erstellt."));
 }
 void DlgHauptfenster::Fehler(const QString &fehler)
 {
@@ -105,19 +103,6 @@ void DlgHauptfenster::on_txtAPI_Key_editingFinished()
 void DlgHauptfenster::on_sbAktualisierung_valueChanged(int wert)
 {
 	K_Steuerung->AktualisierungSetzen(static_cast<uint>(wert));
-}
-void DlgHauptfenster::on_txtPLZ_DB_editingFinished()
-{
-	K_Steuerung->PLZ_DBSetzen(txtPLZ_DB->text());
-}
-void DlgHauptfenster::on_tbPLZ_DB_clicked()
-{
-	QString Datei=QFileDialog::getSaveFileName(this,tr("PLZ Datenbank"),txtPLZ_DB->text());
-	if(!Datei.isEmpty())
-	{
-		txtPLZ_DB->setText(Datei);
-		on_txtPLZ_DB_editingFinished();
-	}
 }
 void DlgHauptfenster::on_txtPosition_editingFinished()
 {

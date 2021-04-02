@@ -31,18 +31,15 @@ class Steuerung : public QObject
 	public:
 		explicit							Steuerung(QObject *eltern = nullptr);
 		~Steuerung();
-		const QString&						Datenbankdatei()const {return K_Datenbankdatei;}
 		const QStringList					GPS(const uint &plz);
 		void								EinstellungenSpeichern();
 		void								NeuePreissuche(Preissuche *suche);
 		void								PreissucheLoeschen(const QString &welche);
 		void								API_KeySetzen(const QString &key);
 		void								AktualisierungSetzen(const uint&zeit);
-		void								PLZ_DBSetzen(const QString &datei) {K_Datenbankdatei=datei;}
 		void								LetztePositionSetzen(const QGeoCoordinate &pos){K_LetztePosition=pos;}
 		const QString&						API_KeyHolen()const{return K_API_Key;}
 		const uint&							AktualisierungHolen()const{return K_Akualisierung;}
-		const QString&						PLZ_DBHolen()const {return K_Datenbankdatei;}
 		const QGeoCoordinate&				LetztePositionHolen()const{return K_LetztePosition;}
 		const QHash<QString,Preissuche*>&	PreissuchenHolen()const {return K_Suchen;}
 
@@ -62,7 +59,6 @@ class Steuerung : public QObject
 	private:
 		PLZ_Datenbank*						K_PLZ_DB;
 		Tankstellen*						K_Tankstellen;
-		QString								K_Datenbankdatei;
 		QString								K_API_Key;
 		uint								K_Akualisierung;
 		QGeoPositionInfoSource*				K_PositionsQuelle;

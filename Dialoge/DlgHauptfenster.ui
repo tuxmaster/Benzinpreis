@@ -217,27 +217,6 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>PLZ Datenbank:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <item>
-                <widget class="QLineEdit" name="txtPLZ_DB"/>
-               </item>
-               <item>
-                <widget class="QToolButton" name="tbPLZ_DB">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
             </layout>
            </item>
           </layout>

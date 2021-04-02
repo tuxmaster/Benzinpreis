@@ -26,8 +26,6 @@
 #define PARAM_API_KEY_DEMO					"00000000-0000-0000-0000-000000000002"
 #define PARAM_AKTUALISIERUNG				"Aktualisierung"
 #define PARAM_AKTUALISSIERUNG_VORGABE		1
-#define PARAM_PLZ_DB						"PLZ-Datenbank"
-#define PARAM_PLZ_DB_WERT					"/tmp/PLZdb"
 #define PARAM_LETZTE_POSITION				"Letzte-Position"
 #define PARAM_PREIS_POSITION				"Position"
 #define PARAM_PREIS_UMKREIS					"Umkreis"
