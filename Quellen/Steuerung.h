@@ -29,7 +29,7 @@ class Steuerung : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit							Steuerung(QObject *eltern = Q_NULLPTR);
+		explicit							Steuerung(QObject *eltern = nullptr);
 		~Steuerung();
 		const QString&						Datenbankdatei()const {return K_Datenbankdatei;}
 		const QStringList					GPS(const uint &plz);

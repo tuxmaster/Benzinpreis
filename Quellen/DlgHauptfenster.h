@@ -25,7 +25,7 @@ class DlgHauptfenster : public QMainWindow, private Ui::DlgHauptfenster
 		Q_OBJECT
 
 	public:
-		explicit	DlgHauptfenster(QWidget *eltern = Q_NULLPTR);
+		explicit	DlgHauptfenster(QWidget *eltern = nullptr);
 
 	private Q_SLOTS:
 		void		starten();

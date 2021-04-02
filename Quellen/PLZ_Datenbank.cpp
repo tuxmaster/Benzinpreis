@@ -30,7 +30,7 @@ void PLZ_Datenbank::los()
 {
 	if (! QSqlDatabase::isDriverAvailable("QSQLITE"))
 	{
-		Q_EMIT Fehler(trUtf8("Das SQLite Modul für Qt fehlt."));
+		Q_EMIT Fehler(tr("Das SQLite Modul für Qt fehlt."));
 		return;
 	}
 	if(! QFile::exists(K_Datei))
@@ -49,13 +49,13 @@ void PLZ_Datenbank::DatenbankErstellen()
 	QNetworkRequest Anforderung(QUrl(PLZ_DB_URL));
 	Anforderung.setAttribute(QNetworkRequest::FollowRedirectsAttribute,true);
 	K_NAM->get(Anforderung);
-	Q_EMIT Meldung(trUtf8("Lade PLZ Datei aus dem Internet."));
+	Q_EMIT Meldung(tr("Lade PLZ Datei aus dem Internet."));
 }
 void PLZ_Datenbank::DownloadFertig(QNetworkReply*antwort)
 {
 	QUrl url= antwort->url();
 	if (antwort->error())
-		Q_EMIT Fehler(trUtf8("Fehler beim Abrufen von: %1\n%2")
+		Q_EMIT Fehler(tr("Fehler beim Abrufen von: %1\n%2")
 						.arg(url.toString())
 						.arg(url.errorString()));
 	else
@@ -63,7 +63,7 @@ void PLZ_Datenbank::DownloadFertig(QNetworkReply*antwort)
 		if (antwort->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() != 300 )
 			DownloadSpeichern(antwort);
 		else
-			Q_EMIT Fehler(trUtf8("HTTP Status Code 300 empfangen."));
+			Q_EMIT Fehler(tr("HTTP Status Code 300 empfangen."));
 	}
 	antwort->deleteLater();
 }
@@ -73,7 +73,7 @@ void PLZ_Datenbank::DownloadSpeichern(QNetworkReply* antwort)
 	QTemporaryFile tmpDatei;
 	if (!tmpDatei.open())
 	{
-		Q_EMIT Fehler(trUtf8("Konnnte nicht in die Datei %1 schreiben.\n%1")
+		Q_EMIT Fehler(tr("Konnnte nicht in die Datei %1 schreiben.\n%1")
 					  .arg(tmpDatei.fileName())
 					  .arg(tmpDatei.errorString()));
 		return;
@@ -84,13 +84,13 @@ void PLZ_Datenbank::DownloadSpeichern(QNetworkReply* antwort)
 }
 void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 {
-	Q_EMIT Meldung(trUtf8("Beginne PLZ Konvertierung."));
+	Q_EMIT Meldung(tr("Beginne PLZ Konvertierung."));
 	QFile DB_Datei(K_Datei);
 	if (DB_Datei.exists())
 	{
 		if (!DB_Datei.remove())
 		{
-			Q_EMIT Fehler(trUtf8("Konnte %1 nicht löschen.\n%2")
+			Q_EMIT Fehler(tr("Konnte %1 nicht löschen.\n%2")
 						  .arg(K_Datei)
 						  .arg(DB_Datei.errorString()));
 			return;
@@ -100,7 +100,7 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 	DB.setDatabaseName(K_Datei);
 	if (!DB.open())
 	{
-		Q_EMIT Fehler(trUtf8("Konnte die PLZ Datenbank nicht erstellen.\n%1")
+		Q_EMIT Fehler(tr("Konnte die PLZ Datenbank nicht erstellen.\n%1")
 					  .arg(DB.lastError().text()));
 		return;
 	}
@@ -112,7 +112,7 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 	{
 		if (! Abfrage.exec(Aufgabe))
 		{
-			Q_EMIT Fehler(trUtf8("SQL Fehler: %1 bei %2.")
+			Q_EMIT Fehler(tr("SQL Fehler: %1 bei %2.")
 						  .arg(Abfrage.lastError().text())
 						  .arg(Aufgabe));
 			DB.close();
@@ -121,7 +121,7 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 	}
 	if (!datei.open(QIODevice::ReadOnly))
 	{
-		Q_EMIT Fehler(trUtf8("Konnte %1 nicht öffnen.").arg(datei.fileName()));
+		Q_EMIT Fehler(tr("Konnte %1 nicht öffnen.").arg(datei.fileName()));
 		return;
 	}
 	QTextStream PLZ_Daten(&datei);
@@ -138,7 +138,7 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 				if (!Abfrage.prepare("insert into plz_gps(PLZ,Lat,Lo)"
 									 "values(:PLZ,:Lat,:Lo)"))
 				{
-					Q_EMIT Fehler(trUtf8("Konnte die SQL Abfrage nicht vorbereiten.\n%1")
+					Q_EMIT Fehler(tr("Konnte die SQL Abfrage nicht vorbereiten.\n%1")
 								  .arg(Abfrage.lastError().text()));
 					DB.close();
 					datei.close();
@@ -152,7 +152,7 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 					//19 = Datensatz schon da.
 					if ( Abfrage.lastError().nativeErrorCode().toInt() != 19 )
 					{
-						Q_EMIT Fehler(trUtf8("Konnte die Zeile nicht einfügen.\n%1")
+						Q_EMIT Fehler(tr("Konnte die Zeile nicht einfügen.\n%1")
 									  .arg(Abfrage.lastError().text()));
 						DB.close();
 						datei.close();
@@ -164,7 +164,7 @@ void PLZ_Datenbank::DownloadKonvertieren(QFile &datei)
 	datei.close();
 	K_Datenbank=true;
 	Q_EMIT DatenbankVorhanden();
-	Q_EMIT Meldung(trUtf8("PLZ Datenbank erstellt."));
+	Q_EMIT Meldung(tr("PLZ Datenbank erstellt."));
 }
 const QStringList PLZ_Datenbank::GPS(const uint &plz)
 {
@@ -178,20 +178,20 @@ const QStringList PLZ_Datenbank::GPS(const uint &plz)
 	DB.setDatabaseName(K_Datei);
 	if (!DB.open())
 	{
-		Q_EMIT Fehler(trUtf8("Konnte die PLZ Datenbank nicht öffnen.\n%1").arg(DB.lastError().text()));
+		Q_EMIT Fehler(tr("Konnte die PLZ Datenbank nicht öffnen.\n%1").arg(DB.lastError().text()));
 		return QStringList();
 	}
 	QSqlQuery Abfrage(DB);
 	if (!Abfrage.prepare("select Lat,Lo from plz_gps where PLZ=:PLZ"))
 	{
-		Q_EMIT Fehler(trUtf8("Konnte die SQL Abfrage nicht vorbereiten.\n%1").arg(Abfrage.lastError().text()));
+		Q_EMIT Fehler(tr("Konnte die SQL Abfrage nicht vorbereiten.\n%1").arg(Abfrage.lastError().text()));
 		DB.close();
 		return QStringList();
 	}
 	Abfrage.bindValue(":PLZ",plz);
 	if (!Abfrage.exec())
 	{
-		Q_EMIT Fehler(trUtf8("Konnte die PLZ nicht aus der Datenbank lesen.\n%1").arg(Abfrage.lastError().text()));
+		Q_EMIT Fehler(tr("Konnte die PLZ nicht aus der Datenbank lesen.\n%1").arg(Abfrage.lastError().text()));
 		DB.close();
 		return QStringList();
 	}

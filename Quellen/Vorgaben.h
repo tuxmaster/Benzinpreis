@@ -21,6 +21,7 @@
 #define PLZ_DB_NAME							"PLZDB"
 #define APP_NAME							"Benzinpreismonitor"
 #define APP_ORGANISATION					"Tuxmaster"
+#define APP_VERSION							"0.0.1"
 #define PARAM_API_KEY						"API-Key"
 #define PARAM_API_KEY_DEMO					"00000000-0000-0000-0000-000000000002"
 #define PARAM_AKTUALISIERUNG				"Aktualisierung"

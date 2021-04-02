@@ -25,7 +25,7 @@ class PLZ_Datenbank : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit				PLZ_Datenbank( const QString &datenbank,QObject *eltern = Q_NULLPTR);
+		explicit				PLZ_Datenbank( const QString &datenbank,QObject *eltern = nullptr);
 		const QStringList		GPS(const uint &plz);
 
 	public Q_SLOTS:

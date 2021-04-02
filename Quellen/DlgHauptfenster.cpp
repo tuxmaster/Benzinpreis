@@ -20,13 +20,12 @@
 #include <QtWidgets>
 #include <QtPositioning>
 
-DlgHauptfenster::DlgHauptfenster(QWidget *eltern) :
-	QMainWindow(eltern)
+DlgHauptfenster::DlgHauptfenster(QWidget *eltern) :	QMainWindow(eltern)
 {
 	setupUi(this);
-	cbTreibstoff->addItem(trUtf8("Diesel"),"diesel");
-	cbTreibstoff->addItem(trUtf8("Super"),"e5");
-	cbTreibstoff->addItem(trUtf8("Super E10"),"e10");
+	cbTreibstoff->addItem(tr("Diesel"),"diesel");
+	cbTreibstoff->addItem(tr("Super"),"e5");
+	cbTreibstoff->addItem(tr("Super E10"),"e10");
 	QTimer::singleShot(0,this,SLOT(starten()));
 }
 
@@ -66,12 +65,12 @@ void DlgHauptfenster::starten()
 }
 void DlgHauptfenster::KeinePLZDatenbank()
 {
-	 QMessageBox::information(this,trUtf8("Keine Datenbank"),trUtf8("Die Postleizahlendatenbank %1 wurde nicht gefunden.\nDaher wird sie erstellt.")
+	 QMessageBox::information(this,tr("Keine Datenbank"),tr("Die Postleizahlendatenbank %1 wurde nicht gefunden.\nDaher wird sie erstellt.")
 															.arg(K_Steuerung->Datenbankdatei()));
 }
 void DlgHauptfenster::Fehler(const QString &fehler)
 {
-	QMessageBox::critical(this,trUtf8("Fehler"),fehler);
+	QMessageBox::critical(this,tr("Fehler"),fehler);
 	close();
 }
 void DlgHauptfenster::Statusmeldung(const QString &meldung)
@@ -85,8 +84,8 @@ void DlgHauptfenster::PLZ_DB_da()
 void DlgHauptfenster::on_tbPLZ_clicked()
 {
 	bool OK;
-	uint PLZ= static_cast<uint>(QInputDialog::getInt(this,trUtf8("Positionsbestimmung via Postleitzahl"),
-								   trUtf8("Deine Postleitzahl"),0,10000,99999,1,&OK));
+	uint PLZ= static_cast<uint>(QInputDialog::getInt(this,tr("Positionsbestimmung via Postleitzahl"),
+								   tr("Deine Postleitzahl"),0,10000,99999,1,&OK));
 	if (OK)
 		txtPosition->setText(K_Steuerung->GPS(PLZ).join(','));
 }
@@ -113,7 +112,7 @@ void DlgHauptfenster::on_txtPLZ_DB_editingFinished()
 }
 void DlgHauptfenster::on_tbPLZ_DB_clicked()
 {
-	QString Datei=QFileDialog::getSaveFileName(this,trUtf8("PLZ Datenbank"),txtPLZ_DB->text());
+	QString Datei=QFileDialog::getSaveFileName(this,tr("PLZ Datenbank"),txtPLZ_DB->text());
 	if(!Datei.isEmpty())
 	{
 		txtPLZ_DB->setText(Datei);

@@ -237,7 +237,7 @@ void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 			}
 			else
 			{
-				QString keinStatus=trUtf8("Kein Status im Json");
+				QString keinStatus=tr("Kein Status im Json");
 				qInfo()<<keinStatus;
 				Q_EMIT Warnung(keinStatus);
 			}
@@ -248,7 +248,7 @@ void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 		uint HTTP_Status=antwort->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
 		qInfo()<<"Status:"<<HTTP_Status;
 		qInfo()<<"Server Text:"<<antwort->readAll();
-		Q_EMIT Warnung(trUtf8("Der Server für die API ist nich zu erreichen. Status: %1").arg(HTTP_Status));
+		Q_EMIT Warnung(tr("Der Server für die API ist nich zu erreichen. Status: %1").arg(HTTP_Status));
 	}
 	antwort->deleteLater();
 }

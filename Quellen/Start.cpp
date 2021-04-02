@@ -25,13 +25,14 @@ int main(int argumente_anzahl, char *argumente[])
 {
 	QApplication qt(argumente_anzahl,argumente);
 	qt.setApplicationName(APP_NAME);
+	qt.setApplicationVersion(APP_VERSION);
 	qt.setOrganizationName(APP_ORGANISATION);
 
-	QString Uebersetzungspfad=QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-	QTranslator QtUebersetzung;
-	QtUebersetzung.load(QString("qt_%1").arg(QLocale::system().name()),Uebersetzungspfad);
-	qt.installTranslator(&QtUebersetzung);
-	DlgHauptfenster hauptfenster;
-	hauptfenster.show();
+	QString translationPath=QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+	QTranslator QtTranslation;
+	QtTranslation.load(QString("qt_%1").arg(QLocale::system().name()),translationPath);
+	qt.installTranslator(&QtTranslation);
+	DlgHauptfenster main;
+	main.show();
 	return qt.exec();
 }

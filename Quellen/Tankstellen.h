@@ -30,7 +30,7 @@ class Tankstellen : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit					Tankstellen(QObject *eltern = Q_NULLPTR);
+		explicit					Tankstellen(QObject *eltern = nullptr);
 		~Tankstellen();
 		void						AufgabenUebernehmen(const QList<Preissuche*> &liste);
 		void						AktualisieungsintervallSetzen(const uint &zeit);
