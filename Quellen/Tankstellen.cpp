@@ -33,8 +33,14 @@ Tankstellen::Tankstellen(QObject *eltern) : QObject(eltern)
 	connect(K_Preiswecker,&QTimer::timeout,this,&Tankstellen::PreisAktualisierenWecker);
 	connect(K_Detailwecker,&QTimer::timeout,this,&Tankstellen::DetailsAktualisieren);
 	connect(K_NM,&QNetworkAccessManager::finished,this,&Tankstellen::AnfrageFertig);
-	//Minuten
-	K_Detailwecker->start(TANKSTELLE_DETAIL_AKTUALISIERUNG*60000);
+	if (qApp->arguments().contains("tor"))
+	{
+		qCDebug(logTankstellen)<<"call the prices over the tor network";
+		K_NM->setProxy(QNetworkProxy(QNetworkProxy::Socks5Proxy,"127.0.0.1", 9150));
+	}
+	std::chrono::minutes minutes(TANKSTELLE_DETAIL_AKTUALISIERUNG);
+	std::chrono::milliseconds ms=minutes;
+	K_Detailwecker->start(ms);
 }
 Tankstellen::~Tankstellen()
 {
@@ -47,6 +53,7 @@ Tankstellen::~Tankstellen()
 }
 void Tankstellen::API_Key_Setzen(const QString &key)
 {
+	qCDebug(logTankstellen)<<"set api key";
 	if (qApp->arguments().contains("demo"))
 	{
 		qCDebug(logTankstellen)<<"demo mode for the prices";
@@ -82,7 +89,7 @@ void Tankstellen::PreisAktualisieren(const bool wecker)
 																						   .arg(K_API_Key);
 		QNetworkRequest Anforderung;
 		Anforderung.setUrl(QUrl(URL));
-		qCDebug(logTankstellen)<<"send request for"<<Auftrag->NameHolen().toUtf8().constData();
+		qCDebug(logTankstellen)<<"send request for"<<Auftrag->NameHolen().toUtf8().constData()<<"at"<<QTime::currentTime().toString("HH:mm:ss").toUtf8().constData();
 		qCDebug(logTankstellen)<<"Request"<<Anforderung.url().toString().toUtf8().constData();
 		K_NM->get(Anforderung);
 	}
@@ -94,7 +101,10 @@ void Tankstellen::AufgabenUebernehmen(const QList<Preissuche*> &liste)
 }
 void Tankstellen::AktualisieungsintervallSetzen(const uint &zeit)
 {
-	K_Preiswecker->start(static_cast<int>(zeit)*5000);
+	std::chrono::minutes minutes(zeit);
+	std::chrono::milliseconds ms=minutes;
+	qCDebug(logTankstellen)<<"Set refresh rate for fuel prices to"<<minutes.count()<<"minutes.";
+	K_Preiswecker->start(ms);
 }
 void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 {
@@ -107,8 +117,8 @@ void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 			QJsonValue OK=Json.object().value("ok");
 			if(!OK.isUndefined())			{
 
-				if(antwort->url().path() == "/json/list.php" )				{
-
+				if(antwort->url().path() == "/json/list.php" )
+				{
 					//Umkreisliste
 					if(OK.toBool())
 					{
