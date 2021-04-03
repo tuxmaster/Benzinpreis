@@ -52,9 +52,7 @@ void DlgHauptfenster::starten()
 		txtPosition->setText(QString("%1,%2").arg(tmp.latitude()).arg(tmp.longitude()));
 
 	for( QString Name : K_Steuerung->PreissuchenHolen().keys())
-	{
 		twPreise->addTab(NeuerPreistab(),Name);
-	}
 	connect(K_Steuerung,&Steuerung::KeinePLZ_DB,this,&DlgHauptfenster::KeinePLZDatenbank);
 	connect(K_Steuerung,&Steuerung::Fehler,this,&DlgHauptfenster::Fehler);
 	connect(K_Steuerung,&Steuerung::Meldung,this,&DlgHauptfenster::Statusmeldung);
@@ -83,7 +81,7 @@ void DlgHauptfenster::on_tbPLZ_clicked()
 {
 	bool OK;
 	uint PLZ= static_cast<uint>(QInputDialog::getInt(this,tr("Positionsbestimmung via Postleitzahl"),
-								   tr("Deine Postleitzahl"),0,10000,99999,1,&OK));
+															tr("Deine Postleitzahl"),0,10000,99999,1,&OK));
 	if (OK)
 		txtPosition->setText(K_Steuerung->GPS(PLZ).join(','));
 }

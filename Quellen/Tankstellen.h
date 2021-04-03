@@ -26,6 +26,7 @@ class QNetworkReply;
 class Preissuche;
 class Tankstelle;
 
+Q_DECLARE_LOGGING_CATEGORY(logTankstellen)
 class Tankstellen : public QObject
 {
 		Q_OBJECT
@@ -34,14 +35,7 @@ class Tankstellen : public QObject
 		~Tankstellen();
 		void						AufgabenUebernehmen(const QList<Preissuche*> &liste);
 		void						AktualisieungsintervallSetzen(const uint &zeit);
-		void						API_Key_Setzen(const QString &key)
-		{
-			//Für Testzwecke;
-			if (qApp->arguments().contains("demo"))
-				K_API_Key=PARAM_API_KEY_DEMO;
-			else
-				K_API_Key=key;
-		}
+		void						API_Key_Setzen(const QString &key);
 
 	Q_SIGNALS:
 		void						Warnung(const QString& meldung);

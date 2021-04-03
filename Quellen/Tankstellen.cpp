@@ -21,6 +21,7 @@
 
 #include <QtNetwork>
 
+Q_LOGGING_CATEGORY(logTankstellen, APP_NAME  ".Tankstellen")
 Tankstellen::Tankstellen(QObject *eltern) : QObject(eltern)
 {
 	K_Preiswecker=new QTimer(this);
@@ -43,6 +44,16 @@ Tankstellen::~Tankstellen()
 		K_Tankstellen->remove(Zapfe);
 	}
 	delete K_Tankstellen;
+}
+void Tankstellen::API_Key_Setzen(const QString &key)
+{
+	if (qApp->arguments().contains("demo"))
+	{
+		qCDebug(logTankstellen)<<"demo mode for the prices";
+		K_API_Key=PARAM_API_KEY_DEMO;
+	}
+	else
+		K_API_Key=key;
 }
 void Tankstellen::PreisAktualisierenWecker()
 {
@@ -71,6 +82,8 @@ void Tankstellen::PreisAktualisieren(const bool wecker)
 																						   .arg(K_API_Key);
 		QNetworkRequest Anforderung;
 		Anforderung.setUrl(QUrl(URL));
+		qCDebug(logTankstellen)<<"send request for"<<Auftrag->NameHolen().toUtf8().constData();
+		qCDebug(logTankstellen)<<"Request"<<Anforderung.url().toString().toUtf8().constData();
 		K_NM->get(Anforderung);
 	}
 }
@@ -81,9 +94,7 @@ void Tankstellen::AufgabenUebernehmen(const QList<Preissuche*> &liste)
 }
 void Tankstellen::AktualisieungsintervallSetzen(const uint &zeit)
 {
-	//K_Preiswecker->start(static_cast<int>(zeit)*5000);
-	//Minuten
-	K_Preiswecker->start(static_cast<int>(zeit)*60000);
+	K_Preiswecker->start(static_cast<int>(zeit)*5000);
 }
 void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 {
@@ -93,14 +104,11 @@ void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 		QJsonDocument Json=QJsonDocument::fromJson(Daten);
 		if(!Json.isNull())
 		{
-			//qInfo()<<Json;
 			QJsonValue OK=Json.object().value("ok");
-			if(!OK.isUndefined())
-			{
-				//qInfo()<<antwort->url().path();
-				if(antwort->url().path() == "/json/list.php" )
-				{
-					//qInfo()<<"Umkreisliste";
+			if(!OK.isUndefined())			{
+
+				if(antwort->url().path() == "/json/list.php" )				{
+
 					//Umkreisliste
 					if(OK.toBool())
 					{
@@ -163,21 +171,17 @@ void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 							Stelle->EntfernungSetzen(Entfernung);
 							if (!Preise.isEmpty())
 								Stelle->PreiseSetzen(Preise);
-							//qInfo()<<*Stelle;
-							//qInfo()<<Zapfstelle;
 						}
 					}
 					else
 					{
-						qInfo()<<"Liste Fehler";
 						QJsonValue Fehler=Json.object().value("message");
 						K_AbrufpauseListe=true;
 						Q_EMIT Warnung(Fehler.toString());
 					}
 				}
-				else if (antwort->url().path() == "/json/detail.php")
-				{
-					//qInfo()<<"Detailabruf";
+				else if (antwort->url().path() == "/json/detail.php")				{
+
 					//Detail für eine Tanke
 					if(OK.toBool())
 					{
@@ -225,7 +229,7 @@ void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 							//qInfo()<<*TS;
 						}
 						else
-							qInfo()<<"Kein Tankstellenobjekt";
+							qCDebug(logTankstellen)<<"Kein Tankstellenobjekt";
 					}
 					else
 					{
@@ -238,7 +242,7 @@ void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 			else
 			{
 				QString keinStatus=tr("Kein Status im Json");
-				qInfo()<<keinStatus;
+				qCDebug(logTankstellen)<<"No status part in json responce.";
 				Q_EMIT Warnung(keinStatus);
 			}
 		}
@@ -246,9 +250,19 @@ void Tankstellen::AnfrageFertig(QNetworkReply *antwort)
 	else
 	{
 		uint HTTP_Status=antwort->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
-		qInfo()<<"Status:"<<HTTP_Status;
-		qInfo()<<"Server Text:"<<antwort->readAll();
-		Q_EMIT Warnung(tr("Der Server für die API ist nich zu erreichen. Status: %1").arg(HTTP_Status));
+		QString error_message;
+		if (HTTP_Status==0)
+		{
+			qCDebug(logTankstellen)<<"Unable connect to the api server. Errorcode"<<antwort->error();
+			error_message=tr("Der API Server entwortet nicht.");
+		}
+		else
+		{
+			qCDebug(logTankstellen)<<"Server error http status:"<<HTTP_Status;
+			qCDebug(logTankstellen)<<"Server error responce:"<<antwort->readAll();
+			error_message=tr("Der Server für die API ist nich zu erreichen. Status: %1").arg(HTTP_Status);
+		}
+		Q_EMIT Warnung(error_message);
 	}
 	antwort->deleteLater();
 }
@@ -266,7 +280,6 @@ void Tankstellen::DetailsHolen(const QUuid &tanke)
 	//Eine oder Alle
 	if(!tanke.isNull())
 	{
-		//qInfo()<<"Datail für"<<tanke;
 		QString URL=QString("%1detail.php?id=%2&apikey=%3").arg(TANKSTELLE_URL)
 														   .arg(tanke.toString().remove('{').remove('}'))
 														   .arg(K_API_Key);
@@ -276,7 +289,6 @@ void Tankstellen::DetailsHolen(const QUuid &tanke)
 	}
 	else
 	{
-		//qInfo()<<"Detail für alle";
 		if (!K_Detailwecker->isActive())
 			return;
 		for(Tankstelle* Stelle : K_Tankstellen->values())
